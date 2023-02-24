@@ -1,0 +1,651 @@
+<html>
+  <head>
+    <meta name="”robots”" content="”noindex”" />
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=yes"
+    />
+
+    <title>Колаборанти</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@observablehq/plot@0.6"></script>
+    <!--     <script src="https://unpkg.com/axios/dist/axios.min.js"></script> -->
+  </head>
+
+  <body>
+    <div id="chart1"></div>
+    _______________
+<!--     <div id="select_fr"></div> -->
+    <div id="multiCharts"></div>
+
+    <script>
+      d3.csv("data.csv").then(function (data_) {
+        d3.tsv("fr.tsv").then(function (fr) {
+          ///////////////////////data///////////////////////////////
+
+          let sw = screen.width;
+
+          let data = data_
+            .map((d) => {
+              return {
+                ...d,
+                golos: d.golos > 0 ? 1 : 0,
+                date: d3.timeParse("%Y-%m-%d")(d.date2),
+              };
+            })
+            .filter(
+              (d) =>
+                d.date < new Date("2023-04-01") &&
+                d.date > new Date("2021-10-01")
+            );
+
+          data.forEach((d) => {
+            let fff = fr.find((e) => e.dep == d.dep);
+            d.fr = fff ? fff.fr : null;
+          });
+
+          ///////////////////////chart0///////////////////////////////
+
+          let orders = d3
+            .rollups(
+              data,
+              (v) => ({
+                sum: d3.sum(v, (d) => d.golos),
+                count: v.length,
+              }),
+              // (v) => v.length,
+              (d) => d.dep
+            )
+            // .filter((d) => d[1].count > 5)
+            .sort((a, b) => a[1].sum - b[1].sum)
+            .map((d) => d[0])
+            .slice(0, 30);
+
+          document.getElementById("chart1").appendChild(
+            Plot.plot({
+              // style: { background: "#ddd" },
+              marginLeft: 150,
+              marginTop: 100,
+              marginBottom: 50,
+              marginRight: 200,
+              height: sw > 400 ? 500 : 800,
+              width: sw > 400 ? 1120 : 600,
+              // x: { axis: "top", tickRotate: 0, tickFormat: d3.utcFormat("%m") },
+              color: {
+                domain: [1, 0],
+                range: ["#B7394D", "#C9DCC0"],
+                // legend: true
+              },
+              y: {
+                domain: orders,
+                tickSize: 0,
+                label: "",
+                // axis: null
+              },
+              x: {
+                label: "",
+                type: "band",
+                //   axis: "top",
+                //   // ticks: 5,
+                //   // tickRotate: -45,
+                //   tickFormat: (d, i) => (i % 3 == 0 ? d3.timeFormat("%b")(d) : "")
+              },
+              marks: [
+                Plot.axisY({
+                  // ticks: "month",
+                  color: "#aaa",
+                  dx: 7,
+                  tickSize: 0,
+                  fontSize: sw > 400 ? 10 : 18,
+                  // tickPadding: 20,
+                  // tickFormat: (d, i) => (i % 16 == 0 ? d3.timeFormat("%Y")(d) : ""),
+                  // textAnchor: "start"
+                }),
+                Plot.axisX({
+                  // ticks: "month",
+                  anchor: "top",
+                  dx: -8,
+                  tickSize: 0,
+                  tickPadding: -5,
+                  tickFormat: (d, i) =>
+                    sw > 400
+                      ? i % 2 == 0
+                        ? d3.timeFormat("%b")(d)
+                        : ""
+                      : i % 4 == 0
+                      ? d3.timeFormat("%b")(d)
+                      : "",
+                  textAnchor: "start",
+                }),
+                Plot.cell(data, {
+                  x: "date",
+                  y: "dep",
+                  z: "dep",
+                  // strokeWidth: 5,
+                  fill: "golos",
+                  // markerStart: "dot",
+                  // markerEnd: "dot"
+                }),
+                Plot.ruleX([new Date("2022-02-26T22:00Z")], { dy: 0, dx: 0 }),
+                Plot.ruleX(
+                  [
+                    {
+                      date: new Date("2022-07-09T21:00Z"),
+                      dep1: "Новинський В.В.",
+                      dep2: "Лубінець Д.В.",
+                    },
+                  ],
+                  {
+                    x: "date",
+                    y1: "dep1",
+                    y2: "dep2",
+                    dy: 5,
+                    dx: 0,
+                    stroke: "grey",
+                  }
+                ),
+                Plot.text(
+                  [
+                    // { date: new Date("2021-01-30T22:00Z"), m: "2021" },
+                    { date: new Date("2022-01-29T22:00Z"), m: "2022" },
+                    { date: new Date("2023-01-14T22:00Z"), m: "2023" },
+                  ],
+                  {
+                    frameAnchor: "middle",
+                    dy: -30,
+                    x: "date",
+                    y: (d) => "Козак Т.Р.",
+                    text: (d, i) => d.m,
+                    fill: "#000",
+                    stroke: "#fff",
+                    fontWeight: "bold",
+                    fontSize: 12,
+                  }
+                ),
+                Plot.text(
+                  [`ТОП-30 депутатів, що провели найменше часу в Раді`],
+                  {
+                    frameAnchor: "left",
+                    textAnchor: "start",
+                    dy: -75,
+                    y: (d) => "Козак Т.Р.",
+                    dx: sw > 400 ? 0 : -100,
+                    fill: "#333",
+                    fontWeight: "bold",
+                    fontSize: sw > 400 ? 18 : 20,
+                  }
+                ),
+                Plot.text(
+                  [
+                    `Присутні (червоний) або відсутні (сірий) депутати/ки впродовж сесійного тижня.`,
+                  ],
+                  {
+                    frameAnchor: "left",
+                    textAnchor: "start",
+                    dy: -55,
+                    y: (d) => "Козак Т.Р.",
+                    dx: sw > 400 ? 0 : -100,
+                    fill: "#333",
+                    // fontWeight: "bold",
+                    fontSize: sw > 400 ? 14 : 16,
+                  }
+                ),
+
+                // Plot.text([`↑`], {
+                //   frameAnchor: "middle",
+                //   textAnchor: "start",
+                //   dy: 95,
+                //   dx: 44
+                //   // fill: "#000",
+                //   // stroke: "#fff"
+                // }),
+                // Plot.text(
+                //   [
+                //     `← Столар повернувся в Україну\nпісля нового року і\nвперше опинився в Раді,\nщоб убезпечити свій\nмандат. Зараз, як\nпишуть УП, його не випускають\nзкраїни`
+                //   ],
+                //   {
+                //     frameAnchor: "middle",
+                //     textAnchor: "start",
+                //     dy: -65,
+                //     dx: 420,
+                //     fill: "#000",
+                //     stroke: "#fff"
+                //   }
+                // ),
+                Plot.text(
+                  [
+                    `В січні 2023 року Рада\nпозбавила мандатів\nМедведчука та Козака\n(а також Деркача,\nКузьміна, Рабічновича\nта Васильковського)\nчерез втрату\n громадянства`,
+                  ],
+                  {
+                    frameAnchor: "middle",
+                    textAnchor: "start",
+                    y: (d) => "Козак Т.Р.",
+                    dy: 20,
+                    dx: sw > 400 ? 400 : 140,
+                    fill: "#000",
+                    stroke: "#fff",
+                    fontSize: sw > 400 ? 10 : 14,
+                  }
+                ),
+                Plot.text([`⟵―`], {
+                  frameAnchor: "middle",
+                  textAnchor: "start",
+                  dy: -150,
+                  dx: 375,
+                  fill: "#000",
+                  stroke: "#fff",
+                }),
+                Plot.text(
+                  [
+                    {
+                      text: `⟵ Верещук очолила МінТОТ - віцепрем'єр-міністерка`,
+                      dep: "Верещук І.А.",
+                    },
+                  ],
+                  {
+                    frameAnchor: "middle",
+                    textAnchor: "start",
+                    // dy: -95,
+                    dx: sw > 400 ? -300 : 130,
+                    fill: "#000",
+                    stroke: "#fff",
+                    y: (d) => d.dep,
+                    text: (d) => d.text,
+                    fontSize: sw > 400 ? 10 : 14,
+                  }
+                ),
+                Plot.text(
+                  [
+                    {
+                      text: `⟵ Одразу після 24 лютого\nзрадника Киву, який в останнє\nбув у Раді ще у січні, показово\nпозбавили мандату`,
+                      dep: "Кива І.В.",
+                    },
+                  ],
+                  {
+                    frameAnchor: "middle",
+                    textAnchor: "start",
+                    dy: 15,
+                    dx: sw > 400 ? -150 : 130,
+                    fill: "#000",
+                    stroke: "#fff",
+                    y: (d) => d.dep,
+                    text: (d) => d.text,
+                    fontSize: sw > 400 ? 10 : 14,
+                  }
+                ),
+                Plot.text(
+                  [
+                    {
+                      text: `⟵ Забродський мобілізований в ЗСУ`,
+                      dep: "Забродський М.В.",
+                    },
+                  ],
+                  {
+                    // frameAnchor: "middle",
+                    textAnchor: "start",
+                    // dy: 25,
+                    dx: sw > 400 ? -150 : 130,
+                    y: (d) => d.dep,
+                    fill: "#000",
+                    stroke: "#fff",
+                    text: (d) => d.text,
+                    fontSize: sw > 400 ? 10 : 14,
+                  }
+                ),
+                Plot.text(
+                  [
+                    {
+                      text: `⟵ Сольський очолив Мінагро`,
+                      dep: "Сольський М.Т.",
+                    },
+                  ],
+                  {
+                    // frameAnchor: "middle",
+                    textAnchor: "start",
+                    // dy: 25,
+                    dx: sw > 400 ? -150 : 130,
+                    y: (d) => d.dep,
+                    fill: "#000",
+                    stroke: "#fff",
+                    text: (d) => d.text,
+                    fontSize: sw > 400 ? 10 : 14,
+                  }
+                ),
+                Plot.text(
+                  [
+                    `Новиський став\nодним з перших, хто\n"добровільно" склав мандат`,
+                  ],
+                  {
+                    frameAnchor: "middle",
+                    // textAnchor: "start",
+                    dy: 30,
+                    y: (d) => "Лубінець Д.В.",
+                    dx: 50,
+                    fill: "#000",
+                    stroke: "#fff",
+                    fontSize: sw > 400 ? 10 : 14,
+                  }
+                ),
+                Plot.text([`24 лютого`], {
+                  // frameAnchor: "middle",
+                  textAnchor: "center",
+                  dy: 25,
+                  y: (d) => "Лубінець Д.В.",
+                  // dx: -30,
+                  x: new Date("2022-02-26T22:00Z"),
+                  fill: "#000",
+                  stroke: "#fff",
+                  fontSize: 12,
+                  fontWeight: "bold",
+                }),
+              ],
+            })
+          );
+          
+          
+          
+          
+          
+          
+          
+          
+
+          ///////////////////////select///////////////////////////////
+
+          let list_fr = d3
+            .rollups(
+              data,
+              (v) => ({
+                count: v.length,
+              }),
+              // (v) => v.length,
+              (d) => d.fr
+            )
+            // .filter((d) => d[1].count > 5)
+            // .sort((a, b) => a[1].sum - b[1].sum)
+            .map((d) => {
+                 return {
+                  fr:d[0],
+                  count:d[1]
+                 }
+              })
+            .filter((d) => d.fr);
+
+          // list_fr.unshift({fr:"Всі фракції і групи",count:409});
+
+
+          
+//           var select = d3
+//             .select("#select_fr")
+//             .append("select")
+//             .attr("class", "select")
+//             .on("change", onchange);
+
+//           var options = select
+//             .selectAll("option")
+//             .data(list_fr)
+//             .enter()
+//             .append("option")
+//             .text(function (d) {
+//               return d.fr;
+//             });
+
+//           function onchange() {
+//             let selectValue = d3.select("select").property("value");
+//             // console.log("selectValue", selectValue);
+            
+//             d3.select("#plot2").remove();
+//             createChart(data,selectValue);
+            
+//           }
+          
+          
+          
+          
+
+//           let orders_fr = d3
+//             .rollups(
+//               data,
+//               (v) => ({
+//                 sum: d3.sum(v, (d) => d.golos),
+//                 count: v.length,
+//               }),
+//               // (v) => v.length,
+//               (d) => d.dep
+//             )
+//             // .filter((d) => d[1].count > 5)
+//             .sort((a, b) => a[1].sum - b[1].sum)
+//             .map((d) => d[0])
+//           .slice(0, 5);
+          
+          // console.log("data",list_fr,orders_fr);
+
+          
+          /////////////Chart1/////////////////
+
+        console.log(list_fr)
+
+          
+        d3.select("#multiCharts")
+        .selectAll(".multiChart")
+        .data(list_fr)
+        .enter()
+        .append("div")
+        .attr("id", (d, i) => "multiChart" + i)
+        .attr("class", "multiChart")
+          .attr("class", "multiChart")
+          .style("display", "inline-block")
+          .style("padding-top", "20px")
+                    // .style("width", "200px")
+        .append("text")
+        .style("font-family", "arial")
+        .style("font-size", "14px")
+        .style("padding-left", "20px")
+        .text((d) => d.fr);
+
+      list_fr.map((e, i) => {
+          console.log('e',e)
+      //     d3.select("multiChart" + i)
+      //       .append("text")
+      //       .html("tft");
+                  // document.getElementById("plot2").appendChild(plot2);
+
+          document.getElementById("multiChart" + i).appendChild(
+            createChart(data.filter(d=>d.fr==e.fr),e.count)
+          );
+        });
+          
+        
+        
+         function createChart(data,height) {
+           console.log('fr',height)
+           d3.select("#chart2").append('div').attr('id','plot2')
+           
+           let orders2 = d3
+            .rollups(
+              data,
+              (v) => ({
+                sum: d3.sum(v, (d) => d.golos),
+                count: v.length,
+              }),
+              // (v) => v.length,
+              (d) => d.dep
+            )
+            // .filter((d) => d[1].count > 5)
+            .sort((a, b) => a[1].sum - b[1].sum)
+            .map((d) => d[0]);
+          // .slice(0, 10)
+           
+           let plot2 = Plot.plot({
+              // style: { background: "#ddd" },
+              marginLeft: sw > 400 ? 150 : 200,
+              marginTop: 50,
+              marginBottom: 50,
+              marginRight: 200,
+              height: height.count/1.5,
+              width: sw > 400 ? 1120 : 700,
+              // x: { axis: "top", tickRotate: 0, tickFormat: d3.utcFormat("%m") },
+              color: {
+                domain: [1, 0],
+                 range: ["#B7394D", "#C9DCC0"],
+                // legend: true
+              },
+              y: {
+                domain: orders2,
+                tickSize: 0,
+                label: "",
+                // axis: null
+              },
+              x: {
+                label: "",
+                type: "band",
+                //   axis: "top",
+                //   // ticks: 5,
+                //   // tickRotate: -45,
+                //   tickFormat: (d, i) => (i % 3 == 0 ? d3.timeFormat("%b")(d) : "")
+              },
+              marks: [
+                Plot.axisY({
+                  // ticks: "month",
+                  color: "#aaa",
+                  dx: 7,
+                  tickSize: 0,
+                  fontSize: sw > 400 ? 12 : 20,
+                  // tickPadding: 20,
+                  // tickFormat: (d, i) => (i % 16 == 0 ? d3.timeFormat("%Y")(d) : ""),
+                  // textAnchor: "start"
+                }),
+                Plot.axisX({
+                  // ticks: "month",
+                  anchor: "top",
+                  dx: -8,
+                  dy: -10,
+                  tickSize: 0,
+                  tickPadding: -5,
+                  tickFormat: (d, i) =>
+                    sw > 400
+                      ? i % 2 == 0
+                        ? d3.timeFormat("%b")(d)
+                        : ""
+                      : i % 4 == 0
+                      ? d3.timeFormat("%b")(d)
+                      : "",
+                  textAnchor: "start",
+                }),
+                Plot.cell(data, {
+                  x: "date",
+                  y: "dep",
+                  z: "dep",
+                  // opacity: (d) => (d.fr==selectValue ? 1 : 0.1),
+                  fill: "golos"
+                }),
+                Plot.ruleX([new Date("2022-02-26T22:00Z")], { dy: 0, dx: 0 }),
+                Plot.ruleX(
+                  [
+                    {
+                      date: new Date("2022-07-09T21:00Z"),
+                      dep1: "Новинський В.В.",
+                      dep2: "Лубінець Д.В.",
+                    },
+                  ],
+                  {
+                    x: "date",
+                    y1: "dep1",
+                    y2: "dep2",
+                    dy: 5,
+                    dx: 0,
+                    stroke: "grey",
+                  }
+                ),
+                Plot.text(
+                  [
+                    // { date: new Date("2021-01-30T22:00Z"), m: "2021" },
+                    { date: new Date("2022-01-29T22:00Z"), m: "2022" },
+                    { date: new Date("2023-01-14T22:00Z"), m: "2023" },
+                  ],
+                  {
+                    frameAnchor: "middle",
+                    dy: -30,
+                    x: "date",
+                    y: (d) => "Козак Т.Р.",
+                    text: (d, i) => d.m,
+                    fill: "#000",
+                    stroke: "#fff",
+                    fontWeight: "bold",
+                    fontSize: 12,
+                  }
+                ),
+
+                Plot.text([`24 лютого`], {
+                  // frameAnchor: "middle",
+                  textAnchor: "center",
+                  dy: 25,
+                  y: (d) => "Якименко П.В.",
+                  // dx: -30,
+                  x: new Date("2022-02-26T22:00Z"),
+                  fill: "#000",
+                  stroke: "#fff",
+                  fontSize: 12,
+                  fontWeight: "bold",
+                }),
+              ],
+            })
+           
+            return plot2;
+           
+
+         }
+          
+          
+          ///////////////////////////////////////
+        });
+      });
+
+      d3.timeFormatDefaultLocale({
+        dateTime: "%A, %e %B %Y р. %X",
+        date: "%d.%m.%Y",
+        time: "%H:%M:%S",
+        periods: ["дп", "пп"],
+        days: [
+          "неділя",
+          "понеділок",
+          "вівторок",
+          "середа",
+          "четвер",
+          "п'ятниця",
+          "субота",
+        ],
+        shortDays: ["нд", "пн", "вт", "ср", "чт", "пт", "сб"],
+        months: [
+          "січня",
+          "лютого",
+          "березня",
+          "квітня",
+          "травня",
+          "червня",
+          "липня",
+          "серпня",
+          "вересня",
+          "жовтня",
+          "листопада",
+          "грудня",
+        ],
+        shortMonths: [
+          "січ.",
+          "лют.",
+          "бер.",
+          "квіт.",
+          "трав.",
+          "черв.",
+          "лип.",
+          "серп.",
+          "вер.",
+          "жовт.",
+          "лист.",
+          "груд.",
+        ],
+      });
+    </script>
+  </body>
+</html>
