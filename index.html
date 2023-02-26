@@ -73,7 +73,7 @@
               width: sw > 400 ? 1120 : 600,
               // x: { axis: "top", tickRotate: 0, tickFormat: d3.utcFormat("%m") },
               color: {
-                domain: [1, 0],
+                domain: [0, 1],
                 range: ["#B7394D", "#C9DCC0"],
                 // legend: true
               },
@@ -178,7 +178,7 @@
                 ),
                 Plot.text(
                   [
-                    `Присутні (червоний) або відсутні (сірий) депутати/ки впродовж сесійного тижня.`,
+                    `Присутні (зелений) або відсутні (черовний відтінок) депутати/ки впродовж сесійного тижня.`,
                   ],
                   {
                     frameAnchor: "left",
@@ -487,7 +487,7 @@
               width: sw > 400 ? 1120 : 700,
               // x: { axis: "top", tickRotate: 0, tickFormat: d3.utcFormat("%m") },
               color: {
-                domain: [1, 0],
+                domain: [0, 1],
                  range: ["#B7394D", "#C9DCC0"],
                 // legend: true
               },
