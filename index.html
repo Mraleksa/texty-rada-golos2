@@ -69,7 +69,7 @@
               marginTop: 100,
               marginBottom: 50,
               marginRight: 200,
-              height: sw > 400 ? 500 : 800,
+              height: sw > 400 ? 650 : 800,
               width: sw > 400 ? 1120 : 600,
               // x: { axis: "top", tickRotate: 0, tickFormat: d3.utcFormat("%m") },
               color: {
@@ -93,17 +93,13 @@
               },
               marks: [
                 Plot.axisY({
-                  // ticks: "month",
                   color: "#aaa",
-                  dx: 7,
+                  dx: 12,
                   tickSize: 0,
-                  fontSize: sw > 400 ? 10 : 18,
-                  // tickPadding: 20,
-                  // tickFormat: (d, i) => (i % 16 == 0 ? d3.timeFormat("%Y")(d) : ""),
-                  // textAnchor: "start"
+                  fontSize: sw > 400 ? 12 : 18,
                 }),
                 Plot.axisX({
-                  // ticks: "month",
+                  fontSize: sw > 400 ? 12 : 0,
                   anchor: "top",
                   dx: -8,
                   tickSize: 0,
@@ -142,7 +138,7 @@
                     y2: "dep2",
                     dy: 5,
                     dx: 0,
-                    stroke: "grey",
+strokeWidth:.5
                   }
                 ),
                 Plot.text(
@@ -168,27 +164,27 @@
                   {
                     frameAnchor: "left",
                     textAnchor: "start",
-                    dy: -75,
+                    dy: -80,
                     y: (d) => "Козак Т.Р.",
-                    dx: sw > 400 ? 0 : -100,
+                    dx: sw > 400 ? 5 : -100,
                     fill: "#333",
                     fontWeight: "bold",
-                    fontSize: sw > 400 ? 18 : 20,
+                    fontSize: sw > 400 ? 22 : 24,
                   }
                 ),
                 Plot.text(
                   [
-                    `Присутні (зелений) або відсутні (черовний відтінок) депутати/ки впродовж сесійного тижня.`,
+                    `Присутні (зелений) або відсутні (черовний відтінок) депутати/ки`,
                   ],
                   {
                     frameAnchor: "left",
                     textAnchor: "start",
                     dy: -55,
                     y: (d) => "Козак Т.Р.",
-                    dx: sw > 400 ? 0 : -100,
+                    dx: sw > 400 ? 5 : -100,
                     fill: "#333",
                     // fontWeight: "bold",
-                    fontSize: sw > 400 ? 14 : 16,
+                    fontSize: sw > 400 ? 14 : 18,
                   }
                 ),
 
@@ -221,25 +217,25 @@
                     frameAnchor: "middle",
                     textAnchor: "start",
                     y: (d) => "Козак Т.Р.",
-                    dy: 20,
-                    dx: sw > 400 ? 400 : 140,
+                    dy: 40,
+                    dx: sw > 400 ? 400 : 130,
                     fill: "#000",
                     stroke: "#fff",
-                    fontSize: sw > 400 ? 10 : 14,
+                    fontSize: sw > 400 ? 11 : 16,
                   }
                 ),
                 Plot.text([`⟵―`], {
                   frameAnchor: "middle",
                   textAnchor: "start",
-                  dy: -150,
-                  dx: 375,
+                  dy: -225,
+                  dx: 370,
                   fill: "#000",
                   stroke: "#fff",
                 }),
                 Plot.text(
                   [
                     {
-                      text: `⟵ Верещук очолила МінТОТ - віцепрем'єр-міністерка`,
+                      text: `⟵ Верещук очолила МінТОТ`,
                       dep: "Верещук І.А.",
                     },
                   ],
@@ -247,37 +243,37 @@
                     frameAnchor: "middle",
                     textAnchor: "start",
                     // dy: -95,
-                    dx: sw > 400 ? -300 : 130,
+                    dx: sw > 400 ? -300 : -85,
                     fill: "#000",
                     stroke: "#fff",
                     y: (d) => d.dep,
                     text: (d) => d.text,
-                    fontSize: sw > 400 ? 10 : 14,
+                    fontSize: sw > 400 ? 11 : 16,
                   }
                 ),
                 Plot.text(
                   [
                     {
-                      text: `⟵ Одразу після 24 лютого\nзрадника Киву, який в останнє\nбув у Раді ще у січні, показово\nпозбавили мандату`,
+                      text: `⟵ Одразу після 24 лютого\nзрадника Киву, який\nв останнє був\nу Раді ще у січні,\nпоказово позбавили\nмандату`,
                       dep: "Кива І.В.",
                     },
                   ],
                   {
                     frameAnchor: "middle",
                     textAnchor: "start",
-                    dy: 15,
+                    dy: 25,
                     dx: sw > 400 ? -150 : 130,
                     fill: "#000",
                     stroke: "#fff",
                     y: (d) => d.dep,
                     text: (d) => d.text,
-                    fontSize: sw > 400 ? 10 : 14,
+                    fontSize: sw > 400 ? 11 : 16,
                   }
                 ),
                 Plot.text(
                   [
                     {
-                      text: `⟵ Забродський мобілізований в ЗСУ`,
+                      text: `⟵ Забродський в ЗСУ`,
                       dep: "Забродський М.В.",
                     },
                   ],
@@ -285,12 +281,12 @@
                     // frameAnchor: "middle",
                     textAnchor: "start",
                     // dy: 25,
-                    dx: sw > 400 ? -150 : 130,
+                    dx: sw > 400 ? -150 : -40,
                     y: (d) => d.dep,
                     fill: "#000",
                     stroke: "#fff",
                     text: (d) => d.text,
-                    fontSize: sw > 400 ? 10 : 14,
+                    fontSize: sw > 400 ? 11 : 16,
                   }
                 ),
                 Plot.text(
@@ -303,13 +299,12 @@
                   {
                     // frameAnchor: "middle",
                     textAnchor: "start",
-                    // dy: 25,
-                    dx: sw > 400 ? -150 : 130,
+                    dx: sw > 400 ? -150 : -40,
                     y: (d) => d.dep,
                     fill: "#000",
                     stroke: "#fff",
                     text: (d) => d.text,
-                    fontSize: sw > 400 ? 10 : 14,
+                    fontSize: sw > 400 ? 11 : 16,
                   }
                 ),
                 Plot.text(
@@ -318,13 +313,13 @@
                   ],
                   {
                     frameAnchor: "middle",
-                    // textAnchor: "start",
+                    textAnchor: "start",
                     dy: 30,
                     y: (d) => "Лубінець Д.В.",
-                    dx: 50,
+                    dx: 0,
                     fill: "#000",
                     stroke: "#fff",
-                    fontSize: sw > 400 ? 10 : 14,
+                    fontSize: sw > 400 ? 11 : 16,
                   }
                 ),
                 Plot.text([`24 лютого`], {
@@ -332,11 +327,10 @@
                   textAnchor: "center",
                   dy: 25,
                   y: (d) => "Лубінець Д.В.",
-                  // dx: -30,
+                  fontSize: sw > 400 ? 11 : 16,
                   x: new Date("2022-02-26T22:00Z"),
                   fill: "#000",
                   stroke: "#fff",
-                  fontSize: 12,
                   fontWeight: "bold",
                 }),
               ],
@@ -438,27 +432,27 @@
           .style("display", "inline-block")
           .style("padding-top", "20px")
                     // .style("width", "200px")
-        .append("text")
-        .style("font-family", "arial")
-        .style("font-size", "14px")
-        .style("padding-left", "20px")
-        .text((d) => d.fr);
+        // .append("text")
+        // .style("font-family", "arial")
+        // .style("font-size", "14px")
+        // .style("padding-left", "20px")
+        // .text((d) => d.fr);
 
-      list_fr.map((e, i) => {
-          console.log('e',e)
+        list_fr.map((e, i) => {
+            console.log('e',e)
       //     d3.select("multiChart" + i)
       //       .append("text")
       //       .html("tft");
                   // document.getElementById("plot2").appendChild(plot2);
 
           document.getElementById("multiChart" + i).appendChild(
-            createChart(data.filter(d=>d.fr==e.fr),e.count)
+            createChart(data.filter(d=>d.fr==e.fr),e.count,e.fr)
           );
         });
           
         
         
-         function createChart(data,height) {
+         function createChart(data,height,fr) {
            console.log('fr',height)
            d3.select("#chart2").append('div').attr('id','plot2')
            
@@ -480,11 +474,11 @@
            let plot2 = Plot.plot({
               // style: { background: "#ddd" },
               marginLeft: sw > 400 ? 150 : 200,
-              marginTop: 50,
+              marginTop: 70,
               marginBottom: 50,
-              marginRight: 200,
-              height: height.count/1.5,
-              width: sw > 400 ? 1120 : 700,
+              marginRight: 50,
+              height: height.count/1.6,
+              width: sw > 400 ? 1100 : 650,
               // x: { axis: "top", tickRotate: 0, tickFormat: d3.utcFormat("%m") },
               color: {
                 domain: [0, 1],
@@ -523,6 +517,7 @@
                   dy: -10,
                   tickSize: 0,
                   tickPadding: -5,
+                  fontSize: sw > 400 ? 12 : 18,
                   tickFormat: (d, i) =>
                     sw > 400
                       ? i % 2 == 0
@@ -578,17 +573,31 @@
                 ),
 
                 Plot.text([`24 лютого`], {
-                  // frameAnchor: "middle",
+                  frameAnchor: "bottom",
                   textAnchor: "center",
-                  dy: 25,
-                  y: (d) => "Якименко П.В.",
-                  // dx: -30,
+                  dy: 20,
+                   fontSize: sw > 400 ? 12 : 18,
                   x: new Date("2022-02-26T22:00Z"),
                   fill: "#000",
                   stroke: "#fff",
-                  fontSize: 12,
                   fontWeight: "bold",
                 }),
+                 Plot.text(
+                  [fr],
+                  {
+                    frameAnchor: "left",
+                    textAnchor: "start",
+                    dy: -60,
+                    frameAnchor: "top",
+                    text:d=>"Відсутні з "+d,
+                    dx: sw > 400 ? -445 : -200,
+                    fill: "#333",
+                    fontWeight: "bold",
+                    fontSize: sw > 400 ? 22 : 24,
+                  }
+                ),
+                
+                
               ],
             })
            
